@@ -15,6 +15,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Episode {
     /**
+     * ID
+     */
+    private Integer id;
+    /**
+     * bangumi Id
+     */
+    private String bangumiId;
+    /**
      * 集数
      */
     private String number;

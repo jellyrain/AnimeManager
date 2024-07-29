@@ -1,5 +1,8 @@
 package com.rain.animemanager.model.bangumi.service;
 
+import com.rain.animemanager.common.CommonResult;
+import com.rain.animemanager.model.bangumi.dao.BangumiDao;
+import com.rain.animemanager.model.bangumi.dto.OverviewView;
 import com.rain.animemanager.model.bangumi.dto.SearchSubject;
 import com.rain.animemanager.model.bangumi.entity.*;
 import com.rain.animemanager.model.bangumi.entity.Character;
@@ -31,19 +34,28 @@ public class BangumiService {
     @Resource
     private RestTemplateUtil restTemplateUtil;
 
+    /**
+     * Bangumi Dao
+     */
+    @Resource
+    private BangumiDao bangumiDao;
+
+    /**
+     * 请求头
+     */
     private final Map<String, String> headers = Map.of("User-Agent", "jellyrain/anime-manager");
 
     /**
      * 获取动漫概述
      *
-     * @param subjectId 主题 ID
+     * @param bangumiId 番剧 bangumi 上的 ID
      * @return {@link Overview }
      */
-    public Overview getAnimeOverview(String subjectId) {
-        String html = restTemplateUtil.get("https://bangumi.tv/subject/" + subjectId, null, headers, String.class);
+    public Overview getAnimeOverview(String bangumiId) {
+        String html = restTemplateUtil.get("https://bangumi.tv/subject/" + bangumiId, null, headers, String.class);
         Overview overview = new Overview();
-        overview.setId(subjectId);
-        overview.setUrl("https://bangumi.tv/subject/" + subjectId);
+        overview.setBangumiId(bangumiId);
+        overview.setUrl("https://bangumi.tv/subject/" + bangumiId);
 
         Document doc = Jsoup.parse(html);
         Elements el = null;
@@ -178,7 +190,7 @@ public class BangumiService {
                     overview.setCooperation(element.text().split("协力:")[1].trim());
                     break;
                 case "别名:":
-                    overview.setAlias(element.text().split("别名:")[1].trim());
+                    overview.setAlias(overview.getAlias() == null ? element.text().split("别名:")[1].trim() : overview.getAlias() + "、" + element.text().split("别名:")[1].trim());
                     break;
                 case "官方网站:":
                     overview.setOfficialWebsite(element.text().split("官方网站:")[1].trim());
@@ -206,11 +218,11 @@ public class BangumiService {
     /**
      * 获取动漫剧集
      *
-     * @param subjectId 主题 ID
+     * @param bangumiId 番剧 bangumi 上的 ID
      * @return {@link List }<{@link Episode }>
      */
-    public List<Episode> getAnimeEpisodeList(String subjectId) {
-        String html = restTemplateUtil.get("https://bangumi.tv/subject/" + subjectId + "/ep", null, headers, String.class);
+    public List<Episode> getAnimeEpisodeList(String bangumiId) {
+        String html = restTemplateUtil.get("https://bangumi.tv/subject/" + bangumiId + "/ep", null, headers, String.class);
         List<Episode> episodeList = new ArrayList<>();
         Document doc = Jsoup.parse(html);
 
@@ -250,11 +262,11 @@ public class BangumiService {
     /**
      * 获取动漫角色
      *
-     * @param subjectId 主题 ID
+     * @param bangumiId 番剧 bangumi 上的 ID
      * @return {@link List }<{@link Character }>
      */
-    public List<Character> getAnimeCharacterList(String subjectId) {
-        String html = restTemplateUtil.get("https://bangumi.tv/subject/" + subjectId + "/characters", null, headers, String.class);
+    public List<Character> getAnimeCharacterList(String bangumiId) {
+        String html = restTemplateUtil.get("https://bangumi.tv/subject/" + bangumiId + "/characters", null, headers, String.class);
         List<Character> characterList = new ArrayList<>();
         Document doc = Jsoup.parse(html);
 
@@ -304,7 +316,7 @@ public class BangumiService {
      */
     public List<Search> searchAnime(String keyword) {
         Map<String, String> params = Map.of("limit", "10", "offset", "0");
-        Map<String, Object> body = Map.of("keyword", keyword, "filter", Map.of("type",new int[]{2}));
+        Map<String, Object> body = Map.of("keyword", keyword, "filter", Map.of("type", new int[]{2}));
         SearchSubject subject = restTemplateUtil.post("https://api.bgm.tv/v0/search/subjects", params, body, headers, SearchSubject.class);
         List<Search> searchList = new ArrayList<>();
         for (SearchSubject.Data data : subject.getData()) {
@@ -318,5 +330,111 @@ public class BangumiService {
         }
 
         return searchList;
+    }
+
+    /**
+     * 插入剧集
+     *
+     * @param bangumiId 番剧 bangumi 上的 ID
+     * @return {@link Integer }
+     */
+    public Integer insertOverview(String bangumiId) {
+        Overview overview = getAnimeOverview(bangumiId);
+        return bangumiDao.insertOverviewSelective(overview);
+    }
+
+    /**
+     * 删除概览通过番剧 bangumi 上的 ID
+     *
+     * @param bangumiId 番剧 bangumi 上的 ID
+     * @return {@link Integer }
+     */
+    public Integer deleteOverviewByBangumiId(String bangumiId) {
+        return bangumiDao.deleteOverviewByBangumiId(bangumiId);
+    }
+
+    /**
+     * 插入角色
+     *
+     * @param bangumiId 番剧 bangumi 上的 ID
+     * @return {@link Integer }
+     */
+    public Integer insertCharacter(String bangumiId) {
+        List<Character> characterList = getAnimeCharacterList(bangumiId);
+        int count = 0;
+        for (Character character : characterList) {
+            character.setBangumiId(bangumiId);
+            count += bangumiDao.insertCharacterSelective(character);
+        }
+        return count;
+    }
+
+    /**
+     * 删除角色通过番剧 bangumi 上的 ID
+     *
+     * @param bangumiId 番剧 bangumi 上的 ID
+     * @return {@link Integer }
+     */
+    public Integer deleteCharacterByBangumiId(String bangumiId) {
+        return bangumiDao.deleteCharacterByBangumiId(bangumiId);
+    }
+
+    /**
+     * 插入剧集
+     *
+     * @param bangumiId 番剧 bangumi 上的 ID
+     * @return {@link Integer }
+     */
+    public Integer insertEpisode(String bangumiId) {
+        List<Episode> episodeList = getAnimeEpisodeList(bangumiId);
+        int count = 0;
+        for (Episode episode : episodeList) {
+            episode.setBangumiId(bangumiId);
+            count += bangumiDao.insertEpisodeSelective(episode);
+        }
+        return count;
+    }
+
+    /**
+     * 删除剧集通过番剧 bangumi 上的 ID
+     *
+     * @param bangumiId 番剧 bangumi 上的 ID
+     * @return {@link Integer }
+     */
+    public Integer deleteEpisodeByBangumiId(String bangumiId) {
+        return bangumiDao.deleteEpisodeByBangumiId(bangumiId);
+    }
+
+    /**
+     * 刮削番剧数据保存数据库
+     *
+     * @param bangumiId 番剧 bangumi 上的 ID
+     */
+    public void scrapeAndSave(String bangumiId) {
+        insertOverview(bangumiId);
+        insertCharacter(bangumiId);
+        insertEpisode(bangumiId);
+    }
+
+    /**
+     * 通过番剧 bangumi 上的 ID 查找概览
+     *
+     * @param bangumiId 番剧 bangumi 上的 ID
+     * @return {@link CommonResult }<{@link OverviewView }>
+     */
+    public OverviewView findOverviewByBangumiId(String bangumiId) {
+        return bangumiDao.selectOverviewByBangumiId(bangumiId);
+    }
+
+    /**
+     * 更新番剧数据
+     *
+     * @param bangumiId 番剧 bangumi 上的 ID
+     */
+    public void update(String bangumiId) {
+        deleteOverviewByBangumiId(bangumiId);
+        deleteCharacterByBangumiId(bangumiId);
+        deleteEpisodeByBangumiId(bangumiId);
+        scrapeAndSave(bangumiId);
     }
 }

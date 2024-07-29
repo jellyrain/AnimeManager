@@ -15,6 +15,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Character {
     /**
+     * ID
+     */
+    private Integer id;
+    /**
+     * bangumi Id
+     */
+    private String bangumiId;
+    /**
      * 名字
      */
     private String name;

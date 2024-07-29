@@ -17,7 +17,11 @@ public class Overview {
     /**
      * ID
      */
-    private String id;
+    private Integer id;
+    /**
+     * bangumi Id
+     */
+    private String bangumiId;
     /**
      * 网址
      */

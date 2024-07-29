@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rain.animemanager.model.bangumi.dao.BangumiDao">
+    <resultMap id="OverviewViewMap" type="com.rain.animemanager.model.bangumi.dto.OverviewView">
+        <id column="overview_bangumi_id" jdbcType="VARCHAR" property="bangumiId"/>
+        <association property="overview" javaType="com.rain.animemanager.model.bangumi.entity.Overview">
+            <id column="overview_id" jdbcType="INTEGER" property="id" />
+            <result column="overview_bangumi_id" jdbcType="VARCHAR" property="bangumiId" />
+            <result column="url" jdbcType="VARCHAR" property="url" />
+            <result column="overview_name" jdbcType="VARCHAR" property="name" />
+            <result column="overview_chinese_name" jdbcType="VARCHAR" property="chineseName" />
+            <result column="cover" jdbcType="VARCHAR" property="cover" />
+            <result column="summary" jdbcType="VARCHAR" property="summary" />
+            <result column="score" jdbcType="VARCHAR" property="score" />
+            <result column="episode" jdbcType="INTEGER" property="episode" />
+            <result column="start_date" jdbcType="VARCHAR" property="startDate" />
+            <result column="week_day" jdbcType="VARCHAR" property="weekDay" />
+            <result column="original" jdbcType="VARCHAR" property="original" />
+            <result column="director" jdbcType="VARCHAR" property="director" />
+            <result column="scriptwriter" jdbcType="VARCHAR" property="scriptwriter" />
+            <result column="storyboard" jdbcType="VARCHAR" property="storyboard" />
+            <result column="director_of_photography" jdbcType="VARCHAR" property="directorOfPhotography" />
+            <result column="music" jdbcType="VARCHAR" property="music" />
+            <result column="character_design" jdbcType="VARCHAR" property="characterDesign" />
+            <result column="series_composition" jdbcType="VARCHAR" property="seriesComposition" />
+            <result column="art_director" jdbcType="VARCHAR" property="artDirector" />
+            <result column="color_design" jdbcType="VARCHAR" property="colorDesign" />
+            <result column="chief_animation_director" jdbcType="VARCHAR" property="chiefAnimationDirector" />
+            <result column="animation_director" jdbcType="VARCHAR" property="animationDirector" />
+            <result column="photography_director" jdbcType="VARCHAR" property="photographyDirector" />
+            <result column="prop_design" jdbcType="VARCHAR" property="propDesign" />
+            <result column="editing" jdbcType="VARCHAR" property="editing" />
+            <result column="theme_song_arrangement" jdbcType="VARCHAR" property="themeSongArrangement" />
+            <result column="theme_song_composition" jdbcType="VARCHAR" property="themeSongComposition" />
+            <result column="theme_song_lyrics" jdbcType="VARCHAR" property="themeSongLyrics" />
+            <result column="theme_song_performance" jdbcType="VARCHAR" property="themeSongPerformance" />
+            <result column="planning" jdbcType="VARCHAR" property="planning" />
+            <result column="production_management" jdbcType="VARCHAR" property="productionManagement" />
+            <result column="production" jdbcType="VARCHAR" property="production" />
+            <result column="sound_director" jdbcType="VARCHAR" property="soundDirector" />
+            <result column="sound" jdbcType="VARCHAR" property="sound" />
+            <result column="sound_effects" jdbcType="VARCHAR" property="soundEffects" />
+            <result column="special_effects" jdbcType="VARCHAR" property="specialEffects" />
+            <result column="executive_producer" jdbcType="VARCHAR" property="executiveProducer" />
+            <result column="producer" jdbcType="VARCHAR" property="producer" />
+            <result column="music_production" jdbcType="VARCHAR" property="musicProduction" />
+            <result column="animation_production" jdbcType="VARCHAR" property="animationProduction" />
+            <result column="art_design" jdbcType="VARCHAR" property="artDesign" />
+            <result column="opening_ending_storyboard" jdbcType="VARCHAR" property="openingEndingStoryboard" />
+            <result column="three_dimensional_computer_graphics" jdbcType="VARCHAR" property="threeDimensionalComputerGraphics" />
+            <result column="cooperation" jdbcType="VARCHAR" property="cooperation" />
+            <result column="alias" jdbcType="VARCHAR" property="alias" />
+            <result column="official_website" jdbcType="VARCHAR" property="officialWebsite" />
+            <result column="tv_station" jdbcType="VARCHAR" property="tvStation" />
+            <result column="play_end" jdbcType="VARCHAR" property="playEnd" />
+            <result column="copyright" jdbcType="VARCHAR" property="copyright" />
+            <result column="music_producer" jdbcType="VARCHAR" property="musicProducer" />
+        </association>
+        <collection property="characterList" ofType="com.rain.animemanager.model.bangumi.entity.Character">
+            <id column="characters_id" jdbcType="INTEGER" property="id" />
+            <result column="characters_bangumi_id" jdbcType="VARCHAR" property="bangumiId" />
+            <result column="characters_name" jdbcType="VARCHAR" property="name" />
+            <result column="characters_chinese_name" jdbcType="VARCHAR" property="chineseName" />
+            <result column="avatar" jdbcType="VARCHAR" property="avatar" />
+            <result column="characters_type" jdbcType="VARCHAR" property="type" />
+            <result column="sex" jdbcType="VARCHAR" property="sex" />
+            <result column="birthday" jdbcType="VARCHAR" property="birthday" />
+            <result column="voice_actor" jdbcType="VARCHAR" property="voiceActor" />
+            <result column="voice_actor_chinese_name" jdbcType="VARCHAR" property="voiceActorChineseName" />
+            <result column="voice_actor_avatar" jdbcType="VARCHAR" property="voiceActorAvatar" />
+        </collection>
+        <collection property="episodeList" ofType="com.rain.animemanager.model.bangumi.entity.Episode">
+            <id column="episode_id" jdbcType="INTEGER" property="id" />
+            <result column="episode_bangumi_id" jdbcType="VARCHAR" property="bangumiId" />
+            <result column="number" jdbcType="VARCHAR" property="number" />
+            <result column="episode_type" jdbcType="VARCHAR" property="type" />
+            <result column="title" jdbcType="VARCHAR" property="title" />
+            <result column="chinese_title" jdbcType="VARCHAR" property="chineseTitle" />
+            <result column="duration" jdbcType="VARCHAR" property="duration" />
+            <result column="first_play_time" jdbcType="VARCHAR" property="firstPlayTime" />
+        </collection>
+    </resultMap>
+
+    <select id="selectOverviewByBangumiId" resultMap="OverviewViewMap">
+        select overview.id             as overview_id,
+               overview.bangumi_id     as overview_bangumi_id,
+               url,
+               overview.name           as overview_name,
+               overview.chinese_name   as overview_chinese_name,
+               cover,
+               summary,
+               score,
+               episode,
+               start_date,
+               week_day,
+               original,
+               director,
+               scriptwriter,
+               storyboard,
+               director_of_photography,
+               music,
+               character_design,
+               series_composition,
+               art_director,
+               color_design,
+               chief_animation_director,
+               animation_director,
+               photography_director,
+               prop_design,
+               editing,
+               theme_song_arrangement,
+               theme_song_composition,
+               theme_song_lyrics,
+               theme_song_performance,
+               planning,
+               production_management,
+               production,
+               sound_director,
+               sound,
+               sound_effects,
+               special_effects,
+               executive_producer,
+               producer,
+               music_production,
+               animation_production,
+               art_design,
+               opening_ending_storyboard,
+               three_dimensional_computer_graphics,
+               cooperation,
+               alias,
+               official_website,
+               tv_station,
+               play_end,
+               copyright,
+               music_producer,
+
+               episode.id              as episode_id,
+               episode.bangumi_id      as episode_bangumi_id,
+               number,
+               episode.type            as episode_type,
+               title,
+               chinese_title,
+               duration,
+               first_play_time,
+
+               characters.id           as characters_id,
+               characters.bangumi_id   as characters_bangumi_id,
+               characters.name         as characters_name,
+               characters.chinese_name as characters_chinese_name,
+               avatar,
+               characters.type         as characters_type,
+               sex,
+               birthday,
+               voice_actor,
+               voice_actor_chinese_name,
+               voice_actor_avatar
+        from bangumi_overview overview
+                 join bangumi_character characters
+                      on overview.bangumi_id = characters.bangumi_id
+                 join bangumi_episode episode
+                      on overview.bangumi_id = characters.bangumi_id
+        where overview.bangumi_id = #{bangumiId}
+        order by characters.id, episode.id
+    </select>
+
+    <insert id="insertOverviewSelective" keyColumn="id" keyProperty="id"
+            parameterType="com.rain.animemanager.model.bangumi.entity.Overview" useGeneratedKeys="true">
+        insert into bangumi_overview
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bangumiId != null and bangumiId != ''">
+                bangumi_id,
+            </if>
+            <if test="url != null and url != ''">
+                url,
+            </if>
+            <if test="name != null and name != ''">
+                `name`,
+            </if>
+            <if test="chineseName != null and chineseName != ''">
+                chinese_name,
+            </if>
+            <if test="cover != null and cover != ''">
+                cover,
+            </if>
+            <if test="summary != null and summary != ''">
+                summary,
+            </if>
+            <if test="score != null and score != ''">
+                score,
+            </if>
+            <if test="episode != null">
+                episode,
+            </if>
+            <if test="startDate != null and startDate != ''">
+                start_date,
+            </if>
+            <if test="weekDay != null and weekDay != ''">
+                week_day,
+            </if>
+            <if test="original != null and original != ''">
+                original,
+            </if>
+            <if test="director != null and director != ''">
+                director,
+            </if>
+            <if test="scriptwriter != null and scriptwriter != ''">
+                scriptwriter,
+            </if>
+            <if test="storyboard != null and storyboard != ''">
+                storyboard,
+            </if>
+            <if test="directorOfPhotography != null and directorOfPhotography != ''">
+                director_of_photography,
+            </if>
+            <if test="music != null and music != ''">
+                music,
+            </if>
+            <if test="characterDesign != null and characterDesign != ''">
+                character_design,
+            </if>
+            <if test="seriesComposition != null and seriesComposition != ''">
+                series_composition,
+            </if>
+            <if test="artDirector != null and artDirector != ''">
+                art_director,
+            </if>
+            <if test="colorDesign != null and colorDesign != ''">
+                color_design,
+            </if>
+            <if test="chiefAnimationDirector != null and chiefAnimationDirector != ''">
+                chief_animation_director,
+            </if>
+            <if test="animationDirector != null and animationDirector != ''">
+                animation_director,
+            </if>
+            <if test="photographyDirector != null and photographyDirector != ''">
+                photography_director,
+            </if>
+            <if test="propDesign != null and propDesign != ''">
+                prop_design,
+            </if>
+            <if test="editing != null and editing != ''">
+                editing,
+            </if>
+            <if test="themeSongArrangement != null and themeSongArrangement != ''">
+                theme_song_arrangement,
+            </if>
+            <if test="themeSongComposition != null and themeSongComposition != ''">
+                theme_song_composition,
+            </if>
+            <if test="themeSongLyrics != null and themeSongLyrics != ''">
+                theme_song_lyrics,
+            </if>
+            <if test="themeSongPerformance != null and themeSongPerformance != ''">
+                theme_song_performance,
+            </if>
+            <if test="planning != null and planning != ''">
+                planning,
+            </if>
+            <if test="productionManagement != null and productionManagement != ''">
+                production_management,
+            </if>
+            <if test="production != null and production != ''">
+                production,
+            </if>
+            <if test="soundDirector != null and soundDirector != ''">
+                sound_director,
+            </if>
+            <if test="sound != null and sound != ''">
+                sound,
+            </if>
+            <if test="soundEffects != null and soundEffects != ''">
+                sound_effects,
+            </if>
+            <if test="specialEffects != null and specialEffects != ''">
+                special_effects,
+            </if>
+            <if test="executiveProducer != null and executiveProducer != ''">
+                executive_producer,
+            </if>
+            <if test="producer != null and producer != ''">
+                producer,
+            </if>
+            <if test="musicProduction != null and musicProduction != ''">
+                music_production,
+            </if>
+            <if test="animationProduction != null and animationProduction != ''">
+                animation_production,
+            </if>
+            <if test="artDesign != null and artDesign != ''">
+                art_design,
+            </if>
+            <if test="openingEndingStoryboard != null and openingEndingStoryboard != ''">
+                opening_ending_storyboard,
+            </if>
+            <if test="threeDimensionalComputerGraphics != null and threeDimensionalComputerGraphics != ''">
+                three_dimensional_computer_graphics,
+            </if>
+            <if test="cooperation != null and cooperation != ''">
+                cooperation,
+            </if>
+            <if test="alias != null and alias != ''">
+                `alias`,
+            </if>
+            <if test="officialWebsite != null and officialWebsite != ''">
+                official_website,
+            </if>
+            <if test="tvStation != null and tvStation != ''">
+                tv_station,
+            </if>
+            <if test="playEnd != null and playEnd != ''">
+                play_end,
+            </if>
+            <if test="copyright != null and copyright != ''">
+                copyright,
+            </if>
+            <if test="musicProducer != null and musicProducer != ''">
+                music_producer,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bangumiId != null and bangumiId != ''">
+                #{bangumiId,jdbcType=VARCHAR},
+            </if>
+            <if test="url != null and url != ''">
+                #{url,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null and name != ''">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="chineseName != null and chineseName != ''">
+                #{chineseName,jdbcType=VARCHAR},
+            </if>
+            <if test="cover != null and cover != ''">
+                #{cover,jdbcType=VARCHAR},
+            </if>
+            <if test="summary != null and summary != ''">
+                #{summary,jdbcType=VARCHAR},
+            </if>
+            <if test="score != null and score != ''">
+                #{score,jdbcType=VARCHAR},
+            </if>
+            <if test="episode != null">
+                #{episode,jdbcType=INTEGER},
+            </if>
+            <if test="startDate != null and startDate != ''">
+                #{startDate,jdbcType=VARCHAR},
+            </if>
+            <if test="weekDay != null and weekDay != ''">
+                #{weekDay,jdbcType=VARCHAR},
+            </if>
+            <if test="original != null and original != ''">
+                #{original,jdbcType=VARCHAR},
+            </if>
+            <if test="director != null and director != ''">
+                #{director,jdbcType=VARCHAR},
+            </if>
+            <if test="scriptwriter != null and scriptwriter != ''">
+                #{scriptwriter,jdbcType=VARCHAR},
+            </if>
+            <if test="storyboard != null and storyboard != ''">
+                #{storyboard,jdbcType=VARCHAR},
+            </if>
+            <if test="directorOfPhotography != null and directorOfPhotography != ''">
+                #{directorOfPhotography,jdbcType=VARCHAR},
+            </if>
+            <if test="music != null and music != ''">
+                #{music,jdbcType=VARCHAR},
+            </if>
+            <if test="characterDesign != null and characterDesign != ''">
+                #{characterDesign,jdbcType=VARCHAR},
+            </if>
+            <if test="seriesComposition != null and seriesComposition != ''">
+                #{seriesComposition,jdbcType=VARCHAR},
+            </if>
+            <if test="artDirector != null and artDirector != ''">
+                #{artDirector,jdbcType=VARCHAR},
+            </if>
+            <if test="colorDesign != null and colorDesign != ''">
+                #{colorDesign,jdbcType=VARCHAR},
+            </if>
+            <if test="chiefAnimationDirector != null and chiefAnimationDirector != ''">
+                #{chiefAnimationDirector,jdbcType=VARCHAR},
+            </if>
+            <if test="animationDirector != null and animationDirector != ''">
+                #{animationDirector,jdbcType=VARCHAR},
+            </if>
+            <if test="photographyDirector != null and photographyDirector != ''">
+                #{photographyDirector,jdbcType=VARCHAR},
+            </if>
+            <if test="propDesign != null and propDesign != ''">
+                #{propDesign,jdbcType=VARCHAR},
+            </if>
+            <if test="editing != null and editing != ''">
+                #{editing,jdbcType=VARCHAR},
+            </if>
+            <if test="themeSongArrangement != null and themeSongArrangement != ''">
+                #{themeSongArrangement,jdbcType=VARCHAR},
+            </if>
+            <if test="themeSongComposition != null and themeSongComposition != ''">
+                #{themeSongComposition,jdbcType=VARCHAR},
+            </if>
+            <if test="themeSongLyrics != null and themeSongLyrics != ''">
+                #{themeSongLyrics,jdbcType=VARCHAR},
+            </if>
+            <if test="themeSongPerformance != null and themeSongPerformance != ''">
+                #{themeSongPerformance,jdbcType=VARCHAR},
+            </if>
+            <if test="planning != null and planning != ''">
+                #{planning,jdbcType=VARCHAR},
+            </if>
+            <if test="productionManagement != null and productionManagement != ''">
+                #{productionManagement,jdbcType=VARCHAR},
+            </if>
+            <if test="production != null and production != ''">
+                #{production,jdbcType=VARCHAR},
+            </if>
+            <if test="soundDirector != null and soundDirector != ''">
+                #{soundDirector,jdbcType=VARCHAR},
+            </if>
+            <if test="sound != null and sound != ''">
+                #{sound,jdbcType=VARCHAR},
+            </if>
+            <if test="soundEffects != null and soundEffects != ''">
+                #{soundEffects,jdbcType=VARCHAR},
+            </if>
+            <if test="specialEffects != null and specialEffects != ''">
+                #{specialEffects,jdbcType=VARCHAR},
+            </if>
+            <if test="executiveProducer != null and executiveProducer != ''">
+                #{executiveProducer,jdbcType=VARCHAR},
+            </if>
+            <if test="producer != null and producer != ''">
+                #{producer,jdbcType=VARCHAR},
+            </if>
+            <if test="musicProduction != null and musicProduction != ''">
+                #{musicProduction,jdbcType=VARCHAR},
+            </if>
+            <if test="animationProduction != null and animationProduction != ''">
+                #{animationProduction,jdbcType=VARCHAR},
+            </if>
+            <if test="artDesign != null and artDesign != ''">
+                #{artDesign,jdbcType=VARCHAR},
+            </if>
+            <if test="openingEndingStoryboard != null and openingEndingStoryboard != ''">
+                #{openingEndingStoryboard,jdbcType=VARCHAR},
+            </if>
+            <if test="threeDimensionalComputerGraphics != null and threeDimensionalComputerGraphics != ''">
+                #{threeDimensionalComputerGraphics,jdbcType=VARCHAR},
+            </if>
+            <if test="cooperation != null and cooperation != ''">
+                #{cooperation,jdbcType=VARCHAR},
+            </if>
+            <if test="alias != null and alias != ''">
+                #{alias,jdbcType=VARCHAR},
+            </if>
+            <if test="officialWebsite != null and officialWebsite != ''">
+                #{officialWebsite,jdbcType=VARCHAR},
+            </if>
+            <if test="tvStation != null and tvStation != ''">
+                #{tvStation,jdbcType=VARCHAR},
+            </if>
+            <if test="playEnd != null and playEnd != ''">
+                #{playEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="copyright != null and copyright != ''">
+                #{copyright,jdbcType=VARCHAR},
+            </if>
+            <if test="musicProducer != null and musicProducer != ''">
+                #{musicProducer,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertCharacterSelective" keyColumn="id" keyProperty="id"
+            parameterType="com.rain.animemanager.model.bangumi.entity.Character" useGeneratedKeys="true">
+        insert into bangumi_character
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bangumiId != null and bangumiId != ''">
+                bangumi_id,
+            </if>
+            <if test="name != null and name != ''">
+                `name`,
+            </if>
+            <if test="chineseName != null and chineseName != ''">
+                chinese_name,
+            </if>
+            <if test="avatar != null and avatar != ''">
+                avatar,
+            </if>
+            <if test="type != null and type != ''">
+                `type`,
+            </if>
+            <if test="sex != null and sex != ''">
+                sex,
+            </if>
+            <if test="birthday != null and birthday != ''">
+                birthday,
+            </if>
+            <if test="voiceActor != null and voiceActor != ''">
+                voice_actor,
+            </if>
+            <if test="voiceActorChineseName != null and voiceActorChineseName != ''">
+                voice_actor_chinese_name,
+            </if>
+            <if test="voiceActorAvatar != null and voiceActorAvatar != ''">
+                voice_actor_avatar,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bangumiId != null and bangumiId != ''">
+                #{bangumiId,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null and name != ''">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="chineseName != null and chineseName != ''">
+                #{chineseName,jdbcType=VARCHAR},
+            </if>
+            <if test="avatar != null and avatar != ''">
+                #{avatar,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null and type != ''">
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null and sex != ''">
+                #{sex,jdbcType=VARCHAR},
+            </if>
+            <if test="birthday != null and birthday != ''">
+                #{birthday,jdbcType=VARCHAR},
+            </if>
+            <if test="voiceActor != null and voiceActor != ''">
+                #{voiceActor,jdbcType=VARCHAR},
+            </if>
+            <if test="voiceActorChineseName != null and voiceActorChineseName != ''">
+                #{voiceActorChineseName,jdbcType=VARCHAR},
+            </if>
+            <if test="voiceActorAvatar != null and voiceActorAvatar != ''">
+                #{voiceActorAvatar,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertEpisodeSelective" keyColumn="id" keyProperty="id"
+            parameterType="com.rain.animemanager.model.bangumi.entity.Episode" useGeneratedKeys="true">
+        insert into bangumi_episode
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bangumiId != null and bangumiId != ''">
+                bangumi_id,
+            </if>
+            <if test="number != null and number != ''">
+                `number`,
+            </if>
+            <if test="type != null and type != ''">
+                `type`,
+            </if>
+            <if test="title != null and title != ''">
+                title,
+            </if>
+            <if test="chineseTitle != null and chineseTitle != ''">
+                chinese_title,
+            </if>
+            <if test="duration != null and duration != ''">
+                duration,
+            </if>
+            <if test="firstPlayTime != null and firstPlayTime != ''">
+                first_play_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bangumiId != null and bangumiId != ''">
+                #{bangumiId,jdbcType=VARCHAR},
+            </if>
+            <if test="number != null and number != ''">
+                #{number,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null and type != ''">
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null and title != ''">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="chineseTitle != null and chineseTitle != ''">
+                #{chineseTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="duration != null and duration != ''">
+                #{duration,jdbcType=VARCHAR},
+            </if>
+            <if test="firstPlayTime != null and firstPlayTime != ''">
+                #{firstPlayTime,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="deleteOverviewByBangumiId" parameterType="java.lang.String">
+        delete
+        from bangumi_overview
+        where bangumi_id = #{bangumiId}
+    </delete>
+
+    <delete id="deleteCharacterByBangumiId" parameterType="java.lang.String">
+        delete
+        from bangumi_character
+        where bangumi_id = #{bangumiId}
+    </delete>
+
+    <delete id="deleteEpisodeByBangumiId" parameterType="java.lang.String">
+        delete
+        from bangumi_episode
+        where bangumi_id = #{bangumiId}
+    </delete>
+</mapper>
