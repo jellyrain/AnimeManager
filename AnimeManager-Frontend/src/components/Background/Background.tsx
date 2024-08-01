@@ -7,7 +7,7 @@ function Background({images}: BackgroundProps) {
     const {currentImage, previousImage} = useBackground({images, interval: 10000});
 
     return <div className={styles.carousel}>
-        {images.map((image, index) => (
+        {images && images.map((image, index) => (
             <div
                 key={index}
                 className={`${styles['carousel-image']} ${index === currentImage ? styles.active : ''} ${index === previousImage ? styles.previous : ''}`}
