@@ -1,7 +1,8 @@
 package com.rain.animemanager.model.bangumi.controller;
 
 import com.rain.animemanager.common.CommonResult;
-import com.rain.animemanager.model.bangumi.entity.Search;
+import com.rain.animemanager.model.bangumi.vo.Daily;
+import com.rain.animemanager.model.bangumi.vo.Search;
 import com.rain.animemanager.model.bangumi.service.BangumiService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +38,21 @@ public class BangumiController {
             return CommonResult.success(bangumiService.searchAnime(keyword), "搜索番剧成功");
         } catch (Exception e) {
             return CommonResult.failed("搜索番剧失败" + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取每日番剧
+     *
+     * @param weekday 星期
+     * @return {@link CommonResult }<{@link List }<{@link Daily }>>
+     */
+    @GetMapping("/daily")
+    public CommonResult<List<Daily>> daily(String weekday) {
+        try {
+            return CommonResult.success(bangumiService.getDaily(weekday), "获取每日番剧成功");
+        } catch (Exception e) {
+            return CommonResult.failed("获取每日番剧失败" + e.getMessage());
         }
     }
 

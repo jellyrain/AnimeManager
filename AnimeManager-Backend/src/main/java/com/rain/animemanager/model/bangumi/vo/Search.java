@@ -1,4 +1,4 @@
-package com.rain.animemanager.model.bangumi.entity;
+package com.rain.animemanager.model.bangumi.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

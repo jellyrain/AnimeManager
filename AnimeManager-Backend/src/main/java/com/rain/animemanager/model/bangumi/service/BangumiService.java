@@ -2,11 +2,14 @@ package com.rain.animemanager.model.bangumi.service;
 
 import com.rain.animemanager.common.CommonResult;
 import com.rain.animemanager.model.bangumi.dao.BangumiDao;
+import com.rain.animemanager.model.bangumi.dto.Calendar;
 import com.rain.animemanager.model.bangumi.dto.OverviewView;
 import com.rain.animemanager.model.bangumi.dto.SearchSubject;
 import com.rain.animemanager.model.bangumi.entity.*;
 import com.rain.animemanager.model.bangumi.entity.Character;
 import com.rain.animemanager.model.bangumi.enums.CssQueryEnum;
+import com.rain.animemanager.model.bangumi.vo.Daily;
+import com.rain.animemanager.model.bangumi.vo.Search;
 import com.rain.animemanager.utils.RestTemplateUtil;
 import jakarta.annotation.Resource;
 import org.jsoup.Jsoup;
@@ -16,6 +19,7 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -330,6 +334,32 @@ public class BangumiService {
         }
 
         return searchList;
+    }
+
+
+    /**
+     * 获取每日放送
+     *
+     * @param weekday 星期
+     * @return {@link List }<{@link Daily }>
+     */
+    public List<Daily> getDaily(String weekday) {
+        Calendar[] calendars = restTemplateUtil.get("https://api.bgm.tv/calendar", null, headers, Calendar[].class);
+        Calendar calendar = Arrays.stream(calendars).filter(item -> item.getWeekday().getId().equals(Integer.valueOf(weekday))).findFirst().orElseThrow();
+
+        List<Daily> dailyList = new ArrayList<>();
+        for (Calendar.Items item : calendar.getItems()) {
+            Daily daily = new Daily();
+            daily.setId(String.valueOf(item.getId()));
+            daily.setName(item.getName());
+            daily.setChineseName(item.getNameCn());
+            daily.setSummary(item.getSummary());
+            daily.setCover(item.getImages().getLarge());
+            daily.setSummary(item.getSummary());
+            dailyList.add(daily);
+        }
+
+        return dailyList;
     }
 
     /**
